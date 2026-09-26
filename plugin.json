@@ -1,0 +1,56 @@
+{
+  "id": "question-radar",
+  "name": "题源雷达",
+  "version": "0.4.0",
+  "description": "关键词驱动的网络材料采集：按未覆盖/薄弱知识点搜材料→两径落库（匹配既有文档优先/剪藏兜底）→交出题官接地出题；差评自动停采（题库扩充批次 C）；P0 闭环修复：沙箱盲答验证白名单+出题强制署名「题源雷达」（差评停采闸数据基础）",
+  "entry": "index.js",
+  "permissions": [
+    "net:web",
+    "file:read",
+    "file:write",
+    "db:read",
+    "db:write",
+    "agent:tools"
+  ],
+  "depends": [],
+  "usage": "题源雷达按体系树标引关键词，为「0 覆盖/薄弱」知识点从网络采集材料，落库后交给小诺出题官接地出题。\n怎么用：\n1. 侧边栏「题源雷达」页点「开始采集（交小诺出题）」；\n2. 或对小诺说「采集一批新材料」。\n说明：采集的材料全文按剪藏同权责入库为知识库文档（frontmatter 带来源 url，可审计可删除）；出题 sourceSnippet 逐字接地到材料文档；新权限 net:web 首次使用会弹授权确认。差评率过高自动停采。",
+  "configSchema": [
+    {
+      "key": "radar_enabled",
+      "label": "启用雷达采集",
+      "type": "boolean",
+      "default": false,
+      "description": "开启后雷达才会发起网络采集（默认关闭：采集行为需显式同意）"
+    },
+    {
+      "key": "radar_daily_kp_budget",
+      "label": "每日采集知识点上限",
+      "type": "number",
+      "default": 5,
+      "description": "每天最多为多少个知识点采集材料（LLM/网络预算闸）"
+    },
+    {
+      "key": "radar_domains_allowlist",
+      "label": "材料域名白名单",
+      "type": "string",
+      "default": "",
+      "description": "逗号分隔域名（如 zhihu.com,juejin.cn）；留空 = 不限制"
+    },
+    {
+      "key": "radar_extra_sources",
+      "label": "自定义源清单（JSON 数组）",
+      "type": "string",
+      "default": "",
+      "description": "追加自定义源：[{id,title,domains,license,repo,branch,via:\"jsdelivr\",topics[]}]；与内置清单合并"
+    }
+  ],
+  "contributions": [
+    {
+      "point": "nav.entry",
+      "key": "radar",
+      "action": "题源雷达",
+      "method": "pageRadar",
+      "slot": "nav.sidebar"
+    }
+  ]
+}
